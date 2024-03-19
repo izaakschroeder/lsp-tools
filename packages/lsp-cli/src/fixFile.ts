@@ -1,6 +1,7 @@
 import * as fs from 'node:fs/promises';
 import { extname } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import isEqual from 'fast-deep-equal/es6';
 
 import type {
   CodeActionItem,
@@ -24,6 +25,7 @@ const languageMap = {
 interface FixFileOptions {
   actionFilter?: ((action: CodeActionItem) => boolean) | null | undefined;
   actionMap?: ((action: CodeActionItem) => CodeActionItem) | null | undefined;
+  ignoreDuplicateActions?: boolean | null | undefined;
 }
 
 export const fixFile = async (
@@ -80,8 +82,16 @@ export const fixFile = async (
     if (actions.length === 0) {
       return false;
     }
-    let desiredActions = actions.filter((action) => {
+    let desiredActions = actions.filter((action, i) => {
+      let ignoredBecauseDuplicate = false;
+      if (options.ignoreDuplicateActions) {
+        const otherIndex = actions.findIndex((other) => {
+          return isEqual(other, action);
+        });
+        ignoredBecauseDuplicate = otherIndex !== i;
+      }
       return (
+        !ignoredBecauseDuplicate &&
         (options.actionFilter ? options.actionFilter(action) : true) &&
         action.edit.changes[uri] &&
         Object.keys(action.edit.changes).length === 1
