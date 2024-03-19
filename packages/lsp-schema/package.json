@@ -1,0 +1,17 @@
+{
+  "name": "@izaakschroeder/lsp-schema",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "biome check ./"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.1",
+    "typescript": "5.4.2",
+    "zod": "3.22.4"
+  },
+  "peerDependencies": {
+    "zod": "*"
+  }
+}

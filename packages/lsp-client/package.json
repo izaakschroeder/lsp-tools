@@ -1,0 +1,19 @@
+{
+  "name": "@izaakschroeder/lsp-client",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "test": "biome check ./"
+  },
+  "dependencies": {
+    "@izaakschroeder/lsp-schema": "workspace:^",
+    "json-rpc-2.0": "1.7.0",
+    "zod": "3.22.4"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.1",
+    "@types/node": "20.11.29",
+    "typescript": "5.4.2"
+  }
+}

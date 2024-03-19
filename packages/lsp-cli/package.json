@@ -1,0 +1,28 @@
+{
+  "name": "@izaakschroeder/lsp-cli",
+  "version": "0.0.1",
+  "type": "module",
+  "main": "./src/index.ts",
+  "bin": {
+    "lsp": "./dist/cli.js"
+  },
+  "scripts": {
+    "test": "biome check ./"
+  },
+  "dependencies": {
+    "@izaakschroeder/lsp-client": "workspace:^",
+    "chalk": "5.3.0",
+    "cli-progress": "3.12.0",
+    "clipanion": "4.0.0-rc.3",
+    "ku-progress-bar": "0.6.0",
+    "picomatch": "4.0.1",
+    "throat": "6.0.2",
+    "typanion": "3.14.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.6.1",
+    "@types/node": "20.11.29",
+    "@types/picomatch": "2.3.3",
+    "typescript": "5.4.2"
+  }
+}
