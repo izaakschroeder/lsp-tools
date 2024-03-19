@@ -12,14 +12,15 @@ const patternToRegExp = (str: string) => {
   return new RegExp(
     parts
       .map((part, i, arr) => {
+        const sof = i === 0;
         const eof = i === arr.length - 1;
         if (part === '*') {
-          return `[^.]+${eof ? '$' : '\\.'}`;
+          return `${sof ? '^' : ''}[^.]+${eof ? '$' : '\\.'}`;
         }
         if (part === '**') {
-          return `([^.]+\.)*${eof ? '[^.]*$' : ''}`;
+          return `${sof ? '^' : ''}([^.]+\.)*${eof ? '[^.]*$' : ''}`;
         }
-        return `${escapeRegExp(part)}${eof ? '$' : '\\.'}`;
+        return `${sof ? '^' : ''}${escapeRegExp(part)}${eof ? '$' : '\\.'}`;
       })
       .join(''),
   );

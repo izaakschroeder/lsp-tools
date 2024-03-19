@@ -1,10 +1,10 @@
 import * as os from 'node:os';
-import { resolve } from 'node:path';
+import { basename, resolve } from 'node:path';
 import type { WriteStream } from 'node:tty';
 import { pathToFileURL } from 'node:url';
 import { Chalk, type ChalkInstance } from 'chalk';
 import { Option } from 'clipanion';
-import { Bar, Progress, TerminalTty } from 'ku-progress-bar';
+import { Bar, BarItem, Progress, TerminalTty } from 'ku-progress-bar';
 import createThroat from 'throat';
 import * as t from 'typanion';
 
@@ -126,8 +126,16 @@ export class FixCommand extends BaseLspCommand {
       return await fixFile(lsp, path, fixOptions);
     });
 
-    const progress = new Progress({ total: 1 });
+    const progress = new Progress({ total: 1 }, { file: '<none>' });
     const bar = new Bar(new TerminalTty(stdout as WriteStream));
+    bar.add(
+      // TODO(@izaakschroeder): Figure this one out
+      // @ts-expect-error
+      new BarItem(progress, {
+        template:
+          '[{bar}] {percentage} eta: {eta} elapsed: {duration} {value}/{total} – {file}',
+      }),
+    );
     const interval = setInterval(() => bar.render(), 50);
 
     let total = 0;
@@ -138,16 +146,17 @@ export class FixCommand extends BaseLspCommand {
         async (path) => {
           progress.setTotal(++total);
           await exec(path);
-          progress.increment();
+          progress.increment(1, { file: basename(path) });
         },
       );
     }
 
     clearInterval(interval);
+    bar.clean();
 
     stdout.write('🧹 Shutting down language server...\n');
     await lsp.request('shutdown');
     lsp.notify('exit');
-    stdout.write('✨  Done.\n');
+    stdout.write('✨ Done.\n');
   }
 }

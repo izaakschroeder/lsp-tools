@@ -51,8 +51,8 @@ export class LspClient {
     });
   }
 
-  connect(transport: LspTransport) {
-    const connection = transport.connect({
+  async connect(transport: LspTransport) {
+    const connection = await transport.connect({
       tap: (name, fn) => {
         return this.tap(name, fn);
       },
@@ -64,7 +64,7 @@ export class LspClient {
         if (index === -1) {
           return;
         }
-        this.#connections.splice(index);
+        this.#connections.splice(index, 1);
       },
     });
     this.#connections.push(connection);
@@ -142,7 +142,7 @@ export class LspClient {
     const method = notifications[name];
     const arg = method.params.parse(params);
     this.#rpc.notify(name, arg);
-    this.#events.emit(name, arg);
+    this.#events.emit(`$tap-${name}`, arg);
   }
 
   tap<N extends All>(name: N, cb: (params: Params<N>) => void) {

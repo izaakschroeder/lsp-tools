@@ -90,6 +90,9 @@ export const fixFile = async (
     if (options.actionMap) {
       desiredActions = desiredActions.map(options.actionMap);
     }
+    if (desiredActions.length === 0) {
+      return false;
+    }
 
     const finalChanges: TextEdit[] = [];
     const finalActions: CodeActionItem[] = [];

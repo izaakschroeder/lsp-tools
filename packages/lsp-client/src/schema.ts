@@ -89,15 +89,6 @@ export const all = {
   ...events,
 };
 
-type VoidEntries<T> = {
-  [P in keyof T as T[P] extends { params: z.ZodVoid } ? P : never]: T[P];
-};
-type NonVoidEntries<T> = {
-  [P in keyof T as T[P] extends { params: z.ZodVoid } ? never : P]: T[P];
-};
-type VoidNames<T> = keyof VoidEntries<T>;
-type NonVoidNames<T> = keyof NonVoidEntries<T>;
-
 export type All = keyof typeof all;
 
 export type Params<T extends All> = (typeof all)[T]['params'];

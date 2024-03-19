@@ -3,7 +3,7 @@ import { LspStdioTransport } from './LspStdioTransport';
 export const createTransport = (urlString: string) => {
   const url = new URL(urlString);
   switch (url.protocol) {
-    case 'stdio': {
+    case 'stdio:': {
       const bin = url.hostname;
       const args = url.searchParams.getAll('arg');
       return new LspStdioTransport(bin, args);

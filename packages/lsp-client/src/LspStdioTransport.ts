@@ -33,9 +33,11 @@ export class LspStdioTransport implements LspTransport {
       // TODO(@izaakschroeder): Propagate error information
       params.onClose();
     });
-
     return {
       send: (json: JSONRPCPayload) => {
+        if (child.killed) {
+          throw new Error();
+        }
         const payload = JSON.stringify(json);
         const len = Buffer.byteLength(payload);
         child.stdin.write(`Content-Length: ${len}\r\n\r\n${payload}`);

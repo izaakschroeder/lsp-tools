@@ -7,6 +7,7 @@
     "lsp": "./dist/cli.js"
   },
   "scripts": {
+    "build": "rollup -c",
     "test": "biome check ./"
   },
   "dependencies": {
@@ -21,8 +22,13 @@
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.1",
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-node-resolve": "15.2.3",
     "@types/node": "20.11.29",
     "@types/picomatch": "2.3.3",
+    "esbuild": "0.20.2",
+    "rollup": "4.13.0",
+    "rollup-plugin-esbuild": "6.1.1",
     "typescript": "5.4.2"
   }
 }
