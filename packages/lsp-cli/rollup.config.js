@@ -10,7 +10,9 @@ export default [
         exportConditions: ['node'],
       }),
       commonjs(),
-      esbuild(),
+      esbuild({
+        target: 'es2022',
+      }),
     ],
     output: [
       {

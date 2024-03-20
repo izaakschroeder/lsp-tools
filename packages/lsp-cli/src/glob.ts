@@ -13,15 +13,15 @@ export const glob = async (
   cb: (path: string) => Promise<void>,
 ) => {
   const { ignore, include } = options;
-  const isIgnored = ignore ? picomatch(ignore) : () => false;
-  const isIncluded = include ? picomatch(include) : () => true;
+  const isIgnored = ignore ? picomatch(ignore, { dot: true }) : () => false;
+  const isIncluded = include ? picomatch(include, { dot: true }) : () => true;
 
   const processDir = async (root: string, dir: string) => {
     const entries = await fs.readdir(dir, { withFileTypes: true });
     await Promise.all(
       entries.map(async (entry) => {
         const path = join(dir, entry.name);
-        const relativePath = path.substring(root.length);
+        const relativePath = path.substring(root.length + 1);
         if (isIgnored(relativePath)) {
           return;
         }

@@ -71,6 +71,9 @@ export class LspClient {
   }
 
   #send(req: JSONRPCPayload) {
+    if (!this.#connections.length) {
+      throw new Error('Not connected.');
+    }
     for (const connection of this.#connections) {
       connection.send(req);
     }

@@ -10,6 +10,7 @@ import * as t from 'typanion';
 
 import { BaseLspCommand } from './BaseLspCommand';
 import { createActionFilter } from './createActionFilter';
+import { createActionRewrite } from './createActionRewrite';
 import { fixFile } from './fixFile';
 import { glob } from './glob';
 
@@ -49,7 +50,19 @@ export class FixCommand extends BaseLspCommand {
       Can be specified more than once to include multiple patterns.
     `,
   });
-  actionTransform = Option.String('--action-transform');
+  actionTextReplace = Option.Array('--action-text-replace', {
+    description: `
+      Pass a \`needle=haystack\` search/replace string to modify the
+      result after an action has been performed but before it has been
+      applied to your files.
+    `,
+  });
+  actionIgnoreDuplicates = Option.Boolean('--action-ignore-duplicates', {
+    description: `
+      If multiple actions are presented that do the same thing, ignore
+      all but one of them.
+    `,
+  });
 
   // TODO(@izaakschroeder): Move this to `BaseLspCommand`
   // TODO(@izaakschroeder): Do feature detection for workspaces.
@@ -115,12 +128,14 @@ export class FixCommand extends BaseLspCommand {
 
     const actionFilter = createActionFilter(this.actionKinds);
     let actionMap = null;
-    if (this.actionTransform) {
-      const parentURL = pathToFileURL(process.cwd());
-      const resolved = import.meta.resolve(this.actionTransform, parentURL);
-      actionMap = await import(resolved);
+    if (this.actionTextReplace) {
+      actionMap = createActionRewrite(this.actionTextReplace);
     }
-    const fixOptions = { actionFilter, actionMap };
+    const fixOptions = {
+      actionFilter,
+      actionMap,
+      ignoreDuplicateActions: this.actionIgnoreDuplicates,
+    };
 
     const exec = createThroat(this.parallel, async (path) => {
       return await fixFile(lsp, path, fixOptions);
